@@ -13,10 +13,28 @@
             Viking.View.Helpers.localRelativeTime(time, 'date'),
             '<time data-local="date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'
         );
+        
+        var time = (14).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'date'),
+            '<time data-local="date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e')+'</time>'
+        );
+        
+        var time = (369).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'date'),
+            '<time data-local="date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'
+        );
     });
     
     test("localRelativeTime(time, 'time-ago')", function() {
         var time = (3).days().ago();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'time-ago'),
+            '<time data-local="time-ago" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">3 days</time>'
+        );
+        
+        var time = (3).days().fromNow();
         equal(
             Viking.View.Helpers.localRelativeTime(time, 'time-ago'),
             '<time data-local="time-ago" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">3 days</time>'
@@ -29,14 +47,33 @@
             Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
             '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%-l:%M%P')+'</time>'
         );
-        
+
         var time = (5).days().ago();
         equal(
             Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
             '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e')+'</time>'
         );
-        
+
         var time = (369).days().ago();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
+            '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'
+        );
+
+
+        var time = (5).hours().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
+            '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%-l:%M%P')+'</time>'
+        );
+        
+        var time = (5).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
+            '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e')+'</time>'
+        );
+
+        var time = (369).days().fromNow();
         equal(
             Viking.View.Helpers.localRelativeTime(time, 'time-or-date'),
             '<time data-local="time-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'
@@ -75,6 +112,42 @@
         );
         
         var time = (367).days().ago();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'
+        );
+        
+        var time = (5).hours().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">Today</time>'
+        );
+        
+        var time = (1).day().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">Tomorrow</time>'
+        );
+        
+        var time = (2).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%A')+'</time>'
+        );
+        
+        var time = (6).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%A')+'</time>'
+        );
+        
+        var time = (7).days().fromNow();
+        equal(
+            Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
+            '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e')+'</time>'
+        );
+        
+        var time = (367).days().fromNow();
         equal(
             Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),
             '<time data-local="weekday-or-date" datetime="'+time.toISOString()+'" title="'+time.strftime('%B %e, %Y %-l:%M%P %Z')+'">'+time.strftime('%b %e, %Y')+'</time>'

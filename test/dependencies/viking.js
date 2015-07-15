@@ -1,4 +1,4 @@
-//     Viking.js 0.7.0 (sha:7dea43b)
+//     Viking.js 0.8.0 (sha:3514bd8)
 //
 //     (c) 2012-2015 Jonathan Bracy, 42Floors Inc.
 //     Viking.js may be freely distributed under the MIT license.
@@ -116,12 +116,21 @@ Date.prototype.today = function() {
 };
     
 Date.prototype.isToday = function() {
-    return (this > (1).day().ago());
+    return (this.getUTCFullYear() == (new Date()).getUTCFullYear() && this.getUTCMonth() == (new Date()).getUTCMonth() && this.getUTCDate() == (new Date()).getUTCDate());
 };
+
+Date.prototype.isThisMonth = function () {
+    return (this.getUTCFullYear() == (new Date()).getUTCFullYear() && this.getUTCMonth() == (new Date()).getUTCMonth());
+}
 
 Date.prototype.isThisYear = function() {
     return (this.getUTCFullYear() == (new Date()).getUTCFullYear());
 };
+
+
+Date.prototype.past = function () {
+    return (this < (new Date()));
+}
 // ordinalize returns the ordinal string corresponding to integer:
 //
 //     (1).ordinalize()    // => '1st'
@@ -180,6 +189,10 @@ Number.prototype.weeks = Number.prototype.week;
 
 Number.prototype.ago = function() {
     return new Date((new Date()).getTime() - this);
+};
+
+Number.prototype.fromNow = function() {
+    return new Date((new Date()).getTime() + this);
 };
 // Returns a string representation of the receiver suitable for use as a URL
 // query string:
@@ -689,6 +702,13 @@ Viking.Model = Backbone.Model.extend({
     }
 
 });
+// Create a model with +attributes+. Options are the 
+// same as Viking.Model#save
+Viking.Model.create = function(attributes, options) {
+    var model = new this(attributes);
+    model.save(options);
+    return model;
+};
 // Find model by id. Accepts success and error callbacks in the options
 // hash, which are both passed (model, response, options) as arguments.
 //
@@ -700,6 +720,25 @@ Viking.Model.find = function(id, options) {
 	model.fetch(options);
 	return model;
 };
+// Find or create model by attributes. Accepts success callbacks in the
+// options hash, which is passed (model) as arguments.
+//
+// findOrCreateBy returns the model, however it most likely won't have fetched
+// the data	from the server if you immediately try to use attributes of the
+// model.
+Viking.Model.findOrCreateBy = function(attributes, options) {
+    var klass = this;
+    klass.where(attributes).fetch({
+        success: function (modelCollection) {
+            var model = modelCollection.models[0];
+            if (model) {
+                if (options && options.success) options.success(model);
+            } else {
+                klass.create(attributes, options);
+            }
+        }
+    });
+}
 Viking.Model.reflectOnAssociation = function(name) {
     return this.associations[name];
 };
@@ -1439,8 +1478,53 @@ Viking.View = Backbone.View.extend({
 
     renderTemplate: function(locals) {
         return Viking.View.Helpers.render(this.template, locals);
-    }
+    },
 
+    //Copied constructor from Backbone View
+    constructor: function (options) {
+        this.cid = _.uniqueId('view');
+        options || (options = {});
+        _.extend(this, _.pick(options, ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events']));
+        this._ensureElement();
+        
+        // Add an array for storing subView attached to this view so we can remove then
+        this.subViews = [];
+        
+        this.initialize.apply(this, arguments);
+        this.delegateEvents();
+    },
+    
+    // A helper method that constructs a view and adds it to the subView array
+    subView: function (SubView, options) {
+        var view = new SubView(options);
+        this.subViews.push(view);
+        this.listenTo(view, 'remove', this.removeSubView);
+        return view;
+    },
+    
+    // Removes the subview from the array and stop listening to it, and calls
+    // #remove on the subview.
+    removeSubView: function (view) {
+        this.subViews = _.without(this.subViews, view);
+        this.stopListening(view);
+        view.remove();
+    },
+    
+    // Remove all subviews when remove this view. We don't call stopListening
+    // here because this view is being removed anyways so those will get cleaned
+    // up by Backbone.
+    remove: function () {
+        while (this.subViews.length > 0){
+            this.subViews.pop().remove();
+        }
+        
+        // Emit a remove event for when a view is removed
+        // TODO: Maybe backport this to Backbone?
+        this.trigger('remove', this);
+
+        Backbone.View.prototype.remove.apply(this, arguments);
+    }
+    
     //TODO: Default render can just render template
 }, {
 
@@ -2761,7 +2845,7 @@ Viking.View.Helpers.distanceOfTimeInWords = function (fromTime, toTime, options)
     if ( fromTime > toTime ) {
         tmp = fromTime;
         fromTime = toTime;
-        toTime = fromTime;
+        toTime = tmp;
     }
     
     distance_in_seconds = Math.round((toTime.getTime() - fromTime.getTime()) / 1000);
