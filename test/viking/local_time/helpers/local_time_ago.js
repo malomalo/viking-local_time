@@ -1,5 +1,13 @@
 (function () {
-    module("Viking.View.Helpers#localTimeAgo");
+    module("Viking.View.Helpers#localTimeAgo", {
+        setup: function( ) {
+            // All test start at beging of day
+            this.clock = sinon.useFakeTimers(1438758000000);
+        },
+        teardown: function( ) {
+            this.clock.restore();
+        }
+    });
     
     test("localTimeAgo aliases to localRelativeTime", function() {
         var old_func = Viking.View.Helpers.localRelativeTime

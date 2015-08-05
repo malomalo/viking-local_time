@@ -61,7 +61,7 @@ localTime(time)
 //          title="November 27, 2013 6:43pm EDT"
 //          data-localized="true">November 27, 2013 6:43pm</time>
 
-localTime(time)
+localTime(time, {class: 'created'})
 // => <time class="created"
 //          data-format="%B %e, %Y %-l:%M%P"
 //          data-local="time"
@@ -69,12 +69,18 @@ localTime(time)
 //          title="November 27, 2013 6:43pm EDT"
 //          data-localized="true">November 27, 2013 6:43pm</time>
 
-localTime(time)
+localTime(time, '%-l:%M%P')
 // => <time data-format="%B %e, %Y %-l:%M%P"
 //          data-local="time"
 //          datetime="2013-11-27T23:43:22Z"
 //          title="November 27, 2013 6:43pm EDT"
-//          data-localized="true">November 27, 2013 6:43pm</time>
+//          data-localized="true">6:43pm</time>
+
+localTime('now') // Gets updated to now every `Viking.View.updateTimeTags()`
+// => <time data-format="%B %e, %Y %-l:%M%P"
+//          data-local="now"
+//          datetime="2013-11-27T23:43:22Z"
+//          title="November 27, 2013 6:43pm EDT">November 27, 2013 6:43pm</time>
 
 localDate(time)
 // => <time data-format="%B %e, %Y"

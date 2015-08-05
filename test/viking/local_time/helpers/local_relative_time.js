@@ -1,5 +1,13 @@
 (function () {
-    module("Viking.View.Helpers#localRelativeTime");
+    module("Viking.View.Helpers#localRelativeTime", {
+        setup: function( ) {
+            // All test start at beging of day
+            this.clock = sinon.useFakeTimers(1438758000000);
+        },
+        teardown: function( ) {
+            this.clock.restore();
+        }
+    });
     
     test("localRelativeTime(time, 'date')", function() {
         var time = (3).days().ago();
@@ -80,7 +88,7 @@
         );
     });
     
-    test("localRelativeTime(time, 'time-or-date')", function() {
+    test("localRelativeTime(time, 'weekday-or-date')", function() {
         var time = (5).hours().ago();
         equal(
             Viking.View.Helpers.localRelativeTime(time, 'weekday-or-date'),

@@ -1,5 +1,13 @@
 (function () {
-    module("Viking.View.Helpers#localDate");
+    module("Viking.View.Helpers#localDate", {
+        setup: function( ) {
+            // All test start at beging of day
+            this.clock = sinon.useFakeTimers(1438758000000);
+        },
+        teardown: function( ) {
+            this.clock.restore();
+        }
+    });
     
     test("localDate(time)", function() {
         var time = new Date(Date.parse('2013-11-27T23:43:22Z'));
